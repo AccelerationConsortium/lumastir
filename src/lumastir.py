@@ -76,7 +76,7 @@ if __name__ == "__main__":
             controller.set_led_brightness(LED_PINS[vial_loc], 100)
             time.sleep(0.5)
             controller.set_motor_speed(MOTOR_CHANNELS[vial_loc], 100)
-            time.sleep(5)
+            time.sleep(10)
             controller.set_motor_speed(MOTOR_CHANNELS[vial_loc], 0)
             controller.set_led_brightness(LED_PINS[vial_loc],0)
             time.sleep(0.5)
