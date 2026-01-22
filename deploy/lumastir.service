@@ -3,20 +3,21 @@ Description=Lumastir API Server
 After=network.target
 
 [Service]
-User=pi
-WorkingDirectory=~/Projects/lumastir
+# CHANGE THIS to your username
+User=sdl2
+
+# %h resolves to the user's home directory (e.g. /home/pi)
+WorkingDirectory=%h/Projects/lumastir
 
 # Point to the config specific to this physical device
-
-Environment="LUMASTIR_CONFIG=~/Projects/lumastir/configs/3led_3motor.yaml"
+Environment="LUMASTIR_CONFIG=%h/Projects/lumastir/configs/3led_3motor.yaml"
 
 # 'uv run' handles the venv creation and dependency syncing automatically
 # Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh
+ExecStart=%h/.local/bin/uv run lumastir-server
 
-ExecStart=~/.local/bin/uv run lumastir-server
 Restart=always
 RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
-

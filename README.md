@@ -37,7 +37,14 @@ We recommend using `uv` for fast, reliable Python package management.
     ```
 
 2.  **Clone the repository:**
+
     ```bash
+    # Make a "~/Projects" folder and enter it
+    cd ~
+    mkdir Projects
+    cd Projects
+    
+    # clone this repo
     git clone https://github.com/yourusername/lumastir.git
     cd lumastir
     ```
@@ -135,11 +142,13 @@ uv run lumastir-server --config configs/my_custom_setup.yaml
 
 To have Lumastir start automatically on boot:
 
-1.  Edit `deploy/lumastir.service` to match your path and desired config flag.
-    ```ini
-    ExecStart=/home/pi/.local/bin/uv run lumastir-server --config ~/Projects/lumastir/configs/3led_3motor.yaml
-    ```
+1.  Edit `deploy/lumastir.service`.
+    *   Change `User=pi` to your username.
+    *   Ensure the `Environment` config path matches your desired setup.
+    *   *Note: `%h` in the service file automatically resolves to your home directory.*
+
 2.  Install the service:
+    Go to the project folder and
     ```bash
     sudo cp deploy/lumastir.service /etc/systemd/system/
     sudo systemctl enable lumastir
