@@ -52,6 +52,24 @@ We recommend using `uv` for fast, reliable Python package management.
     uv run lumastir-server --port 8080 --host 0.0.0.0
     ```
 
+## CLI Usage
+
+You can control the device directly from the command line (e.g., via SSH) using the `lumastir-cli` tool.
+
+```bash
+# Get server status
+uv run lumastir-cli status
+
+# Set Motor (channel 0 to 50% speed)
+uv run lumastir-cli motor 0 50
+
+# Set LED (GPIO 17 to 100% brightness)
+uv run lumastir-cli led 17 100
+
+# Specify a different host
+uv run lumastir-cli --host http://<other-pi-ip>:8000 status
+```
+
 ## Usage (API)
 
 Once the server is running, you can control it via HTTP requests. The interactive API documentation is available at: `http://<raspberry-pi-ip>:8000/docs`
