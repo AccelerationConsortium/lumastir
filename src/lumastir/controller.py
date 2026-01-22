@@ -4,11 +4,6 @@ import busio
 import RPi.GPIO as GPIO
 from adafruit_pca9685 import PCA9685
 
-# Configuration
-LED_PINS = [17, 18, 27]  # GPIO pins of 3.3V LED
-MOTOR_CHANNELS = [4, 8, 12]  # PCA9685 has 16 12-bit-channels
-
-
 class LumaController:
     def __init__(self, led_pins, motor_channels):
         # LED Setup (GPIO)
@@ -60,32 +55,3 @@ class LumaController:
         GPIO.cleanup()
         self.pca.deinit()
 
-
-if __name__ == "__main__":
-    try:
-        controller = LumaController(LED_PINS, MOTOR_CHANNELS)
-
-        # Demonstration of three LEDs
-        print("Starting blinking test!")
-        for i in range(0, 2):
-            for pin in LED_PINS:
-                controller.blink_led(pin)
-
-        # Demonstration of motors with LED on
-        for vial_loc in [0, 1, 2]:
-            controller.set_led_brightness(LED_PINS[vial_loc], 100)
-            time.sleep(0.5)
-            controller.set_motor_speed(MOTOR_CHANNELS[vial_loc], 100)
-            time.sleep(10)
-            controller.set_motor_speed(MOTOR_CHANNELS[vial_loc], 0)
-            controller.set_led_brightness(LED_PINS[vial_loc],0)
-            time.sleep(0.5)
-            print(f"Finished demo on vial location {vial_loc}.")
-            controller.stop_all_motors()
-
-    except KeyboardInterrupt:
-        controller.cleanup()
-        print("Interrupted!")
-
-    finally:
-        controller.cleanup()

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lumastir"
+version = "0.1.0"
+description = "RPi Hardware controller for Lumastir configurations"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pyyaml",
+    "rpi.gpio",
+    "adafruit-circuitpython-pca9685",
+]
+
+[project.scripts]
+lumastir-server = "lumastir.server:start"
+
