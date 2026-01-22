@@ -9,7 +9,7 @@ WorkingDirectory=/home/pi/lumastir
 Environment="LUMASTIR_CONFIG=/home/pi/lumastir/configs/3led_6fan.yaml"
 # 'uv run' handles the venv creation and dependency syncing automatically
 # Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh
-ExecStart=/home/pi/.cargo/bin/uv run lumastir-server
+ExecStart=/home/pi/.local/bin/uv run lumastir-server
 Restart=always
 RestartSec=10
 

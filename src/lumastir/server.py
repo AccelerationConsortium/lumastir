@@ -37,8 +37,8 @@ def load_hardware():
             motor_channels=config.get("motor_channels", [])
         )
         print(f"Loaded configuration from {config_file_path}")
-        print(f"  LED Pins: {controller.led_pins}")
-        print(f"  Motor Channels: {controller.motor_channels}")
+        print(f"  LED Pins (Indices 0-{len(controller.led_pins)-1}): {controller.led_pins}")
+        print(f"  Motor Channels (Indices 0-{len(controller.motor_channels)-1}): {controller.motor_channels}")
         
     except Exception as e:
         print(f"Failed to load configuration from {config_file_path}: {e}")
@@ -56,30 +56,42 @@ def read_root():
     return {
         "status": "online", 
         "service": "lumastir",
-        "config": config_file_path
+        "config": config_file_path,
+        "config_data": {
+            "led_pins": controller.led_pins if controller else [],
+            "motor_channels": controller.motor_channels if controller else []
+        }
     }
 
-@app.post("/motor/{channel}/speed")
-async def set_motor(channel: int, cmd: MotorCommand):
+@app.post("/motor/{index}/speed")
+async def set_motor(index: int, cmd: MotorCommand):
     if not controller:
          raise HTTPException(status_code=503, detail="Hardware not initialized")
     
-    if channel not in controller.motor_channels:
-        raise HTTPException(status_code=400, detail=f"Invalid motor channel {channel}. Available: {controller.motor_channels}")
+    success, real_channel = controller.set_motor_by_index(index, cmd.speed)
+    
+    if not success:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid motor index {index}. Max index is {len(controller.motor_channels)-1}."
+        )
         
-    controller.set_motor_speed(channel, cmd.speed)
-    return {"status": "ok", "channel": channel, "speed": cmd.speed}
+    return {"status": "ok", "index": index, "hardware_channel": real_channel, "speed": cmd.speed}
 
-@app.post("/led/{pin}/brightness")
-async def set_led(pin: int, cmd: LedCommand):
+@app.post("/led/{index}/brightness")
+async def set_led(index: int, cmd: LedCommand):
     if not controller:
          raise HTTPException(status_code=503, detail="Hardware not initialized")
 
-    if pin not in controller.led_pins:
-        raise HTTPException(status_code=400, detail=f"Invalid LED pin {pin}. Available: {controller.led_pins}")
+    success, real_pin = controller.set_led_by_index(index, cmd.brightness)
 
-    controller.set_led_brightness(pin, cmd.brightness)
-    return {"status": "ok", "pin": pin, "brightness": cmd.brightness}
+    if not success:
+         raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid LED index {index}. Max index is {len(controller.led_pins)-1}."
+        )
+
+    return {"status": "ok", "index": index, "hardware_pin": real_pin, "brightness": cmd.brightness}
 
 def start():
     """Entry point for the application script"""

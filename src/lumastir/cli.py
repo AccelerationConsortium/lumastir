@@ -24,6 +24,16 @@ def send_request(endpoint, data=None, method="GET", host="http://localhost:8000"
         print(f"  {e}")
         print("Is the server running? (try 'systemctl status lumastir' or 'lumastir-server')")
         sys.exit(1)
+    except urllib.error.HTTPError as e:
+         print(f"HTTP Error {e.code}: {e.reason}")
+         # Try to print body if json
+         try:
+             body = e.read().decode()
+             print(json.loads(body))
+         except:
+             pass
+         sys.exit(1)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Lumastir CLI Control")
@@ -35,13 +45,13 @@ def main():
     subparsers.add_parser("status", help="Get server status")
     
     # Motor
-    motor_parser = subparsers.add_parser("motor", help="Control a motor")
-    motor_parser.add_argument("channel", type=int, help="Motor channel ID")
+    motor_parser = subparsers.add_parser("motor", help="Control a motor by its index (0, 1, 2...)")
+    motor_parser.add_argument("index", type=int, help="Motor Index (defined in config)")
     motor_parser.add_argument("speed", type=float, help="Speed percentage (0-100)")
     
     # LED
-    led_parser = subparsers.add_parser("led", help="Control an LED")
-    led_parser.add_argument("pin", type=int, help="GPIO pin number")
+    led_parser = subparsers.add_parser("led", help="Control an LED by its index (0, 1, 2...)")
+    led_parser.add_argument("index", type=int, help="LED Index (defined in config)")
     led_parser.add_argument("brightness", type=float, help="Brightness percentage (0-100)")
     
     args = parser.parse_args()
@@ -51,7 +61,7 @@ def main():
         
     elif args.command == "motor":
         send_request(
-            f"/motor/{args.channel}/speed", 
+            f"/motor/{args.index}/speed", 
             data={"speed": args.speed}, 
             method="POST", 
             host=args.host
@@ -59,7 +69,7 @@ def main():
         
     elif args.command == "led":
         send_request(
-            f"/led/{args.pin}/brightness", 
+            f"/led/{args.index}/brightness", 
             data={"brightness": args.brightness}, 
             method="POST", 
             host=args.host

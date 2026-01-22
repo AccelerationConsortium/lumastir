@@ -25,6 +25,24 @@ class LumaController:
         # Initialize motors to off
         self.stop_all_motors()
 
+    def set_led_by_index(self, index, brightness):
+        """Control LED brightness by index in configuration list (0-100%)"""
+        if 0 <= index < len(self.led_pins):
+            pin = self.led_pins[index]
+            self.pwm_leds[pin].ChangeDutyCycle(brightness)
+            return True, pin
+        return False, None
+
+    def set_motor_by_index(self, index, speed):
+        """Control motor speed by index in configuration list (0-100%)"""
+        if 0 <= index < len(self.motor_channels):
+            channel = self.motor_channels[index]
+            duty_cycle = round(speed * 65535 / 100)  # Convert % to 12-bit value
+            self.pca.channels[channel].duty_cycle = duty_cycle
+            return True, channel
+        return False, None
+
+    # Keeping raw access methods for backward compatibility or direct control if needed
     def set_led_brightness(self, led_pin, brightness):
         """Control LED brightness (0-100%)"""
         if led_pin in self.pwm_leds:
@@ -54,4 +72,3 @@ class LumaController:
             self.pwm_leds[led_pin].stop()
         GPIO.cleanup()
         self.pca.deinit()
-

@@ -31,7 +31,9 @@ We recommend using `uv` for fast, reliable Python package management.
 1.  **Install `uv`:**
     ```bash
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    source $HOME/.cargo/env
+    # You may need to restart your terminal or run:
+    # source $HOME/.local/bin/env  (if it exists)
+    # OR ensure ~/.local/bin is in your PATH
     ```
 
 2.  **Clone the repository:**
@@ -72,11 +74,13 @@ You can control the device directly from the command line (e.g., via SSH) using 
 # Get server status
 uv run lumastir-cli status
 
-# Set Motor (channel 0 to 50% speed)
+# Set Motor (Index 0 to 50% speed)
+# Index 0 maps to the first channel in your config (e.g., Channel 4)
 uv run lumastir-cli motor 0 50
 
-# Set LED (GPIO 17 to 100% brightness)
-uv run lumastir-cli led 17 100
+# Set LED (Index 0 to 100% brightness)
+# Index 0 maps to the first pin in your config (e.g., GPIO 17)
+uv run lumastir-cli led 0 100
 
 # Specify a different host
 uv run lumastir-cli --host http://<other-pi-ip>:8000 status
@@ -89,16 +93,16 @@ Once the server is running, you can control it via HTTP requests. The interactiv
 ### Common Endpoints
 
 **1. Set Motor Speed**
-`POST /motor/{channel}/speed`
+`POST /motor/{index}/speed`
 ```json
 {
   "speed": 50.0
 }
 ```
-*`channel` must be one of the valid channels defined in your configuration.*
+*`index` corresponds to the list index in your configuration (0 for first motor, 1 for second...).*
 
 **2. Set LED Brightness**
-`POST /led/{pin}/brightness`
+`POST /led/{index}/brightness`
 ```json
 {
   "brightness": 100.0
@@ -133,7 +137,7 @@ To have Lumastir start automatically on boot:
 
 1.  Edit `deploy/lumastir.service` to match your path and desired config flag.
     ```ini
-    ExecStart=/home/pi/.cargo/bin/uv run lumastir-server --config /home/pi/lumastir/configs/3led_6fan.yaml
+    ExecStart=/home/pi/.local/bin/uv run lumastir-server --config ~/Projects/lumastir/configs/3led_3motor.yaml
     ```
 2.  Install the service:
     ```bash
