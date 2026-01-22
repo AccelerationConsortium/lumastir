@@ -4,12 +4,16 @@ After=network.target
 
 [Service]
 User=pi
-WorkingDirectory=/home/pi/lumastir
+WorkingDirectory=~/Projects/lumastir
+
 # Point to the config specific to this physical device
-Environment="LUMASTIR_CONFIG=/home/pi/lumastir/configs/3led_6fan.yaml"
+
+Environment="LUMASTIR_CONFIG=~/Projects/lumastir/configs/3led_3motor.yaml"
+
 # 'uv run' handles the venv creation and dependency syncing automatically
 # Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh
-ExecStart=/home/pi/.local/bin/uv run lumastir-server
+
+ExecStart=~/.local/bin/uv run lumastir-server
 Restart=always
 RestartSec=10
 
