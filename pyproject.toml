@@ -19,3 +19,4 @@ dependencies = [
 [project.scripts]
 lumastir-server = "lumastir.server:start"
 lumastir-cli = "lumastir.cli:main"
+lumastir-demo = "lumastir.demo:main"

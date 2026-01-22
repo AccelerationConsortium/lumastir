@@ -52,6 +52,18 @@ We recommend using `uv` for fast, reliable Python package management.
     uv run lumastir-server --port 8080 --host 0.0.0.0
     ```
 
+## Hardware Demo
+
+To verify your hardware setup without running the full server, you can run the demo script. This will cycle through all LEDs and Motors defined in your configuration.
+
+```bash
+# Run demo with default config
+uv run lumastir-demo
+
+# Run demo with custom config
+uv run lumastir-demo --config configs/3led_6fan.yaml
+```
+
 ## CLI Usage
 
 You can control the device directly from the command line (e.g., via SSH) using the `lumastir-cli` tool.
