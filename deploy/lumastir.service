@@ -1,23 +1,23 @@
 [Unit]
-Description=Lumastir API Server
-After=network.target
+Description=Lumastir LED and motor controller
+After=network-online.target tailscaled.service
+Wants=network-online.target
 
 [Service]
-# CHANGE THIS to your username
+Type=simple
+# Customize account, absolute paths, GPIO/I2C permissions, and Tailnet address.
 User=sdl2
-
-# %h resolves to the user's home directory (e.g. /home/pi)
-WorkingDirectory=%h/Projects/lumastir
-
-# Point to the config specific to this physical device
-Environment="LUMASTIR_CONFIG=%h/Projects/lumastir/configs/3led_3motor.yaml"
-
-# 'uv run' handles the venv creation and dependency syncing automatically
-# Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh
-ExecStart=%h/.local/bin/uv run lumastir-server
-
-Restart=always
-RestartSec=10
+WorkingDirectory=/opt/lumastir
+Environment=LUMASTIR_CONFIG=/opt/lumastir/configs/3led_3motor.yaml
+Environment=LUMASTIR_LOCK_FILE=/run/lock/lumastir.lock
+# Provision the venv with the hardware extra BEFORE starting this service.
+# Replace the loopback host with this Pi's Tailnet address for remote access.
+ExecStart=/opt/lumastir/.venv/bin/lumastir-server --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+KillSignal=SIGTERM
+UMask=0077
 
 [Install]
 WantedBy=multi-user.target
